@@ -1,0 +1,23 @@
+.DS_Store
+.env
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+
+# Data and model artifacts. Keep these in Kaggle/HF Hub/W&B/ClearML, not git.
+data/raw/
+data/external/
+data/processed/
+data/results.csv
+data/*.log
+model/
+outputs/
+wandb/
+
+# Large media generated for README demos.
+*.mp4
+*.mov
+*.gif
+

@@ -1,0 +1,30 @@
+services:
+  translator:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./model:/app/model
+      - ./data:/app/data
+    environment:
+      - PYTHONPATH=/app/src
+      - WANDB_MODE=offline
+    profiles: ["cpu"]
+
+  # For the final ByT5 path, run TGI separately and point the gateway to it.
+  # This placeholder documents the intended production split required by the homework.
+  tgi:
+    image: ghcr.io/huggingface/text-generation-inference:latest
+    profiles: ["gpu"]
+    ports:
+      - "8081:80"
+    volumes:
+      - ./model:/data
+    command: ["--model-id", "/data"]
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - capabilities: ["gpu"]

@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Akkadian Translator</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <header class="topbar">
+        <div>
+          <h1>Akkadian Translator</h1>
+          <p>Transliterated Akkadian to English</p>
+        </div>
+        <div id="status" class="status">Ready</div>
+      </header>
+
+      <section class="translator" aria-label="Translator">
+        <div class="pane">
+          <div class="pane-header">
+            <span>Akkadian</span>
+            <button id="clearButton" type="button" title="Clear">×</button>
+          </div>
+          <textarea
+            id="sourceText"
+            spellcheck="false"
+            placeholder="šarrum ana ālim illik"
+          ></textarea>
+        </div>
+
+        <div class="pane">
+          <div class="pane-header">
+            <span>English</span>
+            <button id="copyButton" type="button" title="Copy">⧉</button>
+          </div>
+          <output id="targetText" aria-live="polite"></output>
+        </div>
+      </section>
+    </main>
+
+    <script src="/static/app.js"></script>
+  </body>
+</html>

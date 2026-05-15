@@ -1,0 +1,157 @@
+:root {
+  color-scheme: light;
+  --bg: #f6f7f9;
+  --panel: #ffffff;
+  --line: #d9dee7;
+  --text: #1f2937;
+  --muted: #667085;
+  --accent: #0f766e;
+  --accent-weak: #d9f3ef;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+  font-family:
+    Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.shell {
+  width: min(1180px, calc(100vw - 32px));
+  margin: 0 auto;
+  padding: 28px 0;
+}
+
+.topbar {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+h1 {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 720;
+  letter-spacing: 0;
+}
+
+p {
+  margin: 4px 0 0;
+  color: var(--muted);
+}
+
+.status {
+  min-width: 104px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel);
+  padding: 8px 12px;
+  color: var(--muted);
+  text-align: center;
+  font-size: 14px;
+}
+
+.status.active {
+  border-color: var(--accent);
+  background: var(--accent-weak);
+  color: #115e59;
+}
+
+.translator {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: 520px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--panel);
+}
+
+.pane {
+  display: grid;
+  grid-template-rows: 48px 1fr;
+  min-width: 0;
+}
+
+.pane + .pane {
+  border-left: 1px solid var(--line);
+}
+
+.pane-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--line);
+  padding: 0 14px;
+  color: var(--muted);
+  font-weight: 650;
+}
+
+button {
+  width: 32px;
+  height: 32px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 20px;
+  line-height: 1;
+}
+
+button:hover {
+  border-color: var(--line);
+  background: #f8fafc;
+  color: var(--text);
+}
+
+textarea,
+output {
+  width: 100%;
+  min-height: 470px;
+  border: 0;
+  padding: 22px;
+  font: 18px/1.55 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  color: var(--text);
+}
+
+textarea {
+  resize: none;
+  outline: none;
+}
+
+output {
+  display: block;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  background: #fbfcfd;
+}
+
+@media (max-width: 760px) {
+  .topbar {
+    align-items: start;
+    flex-direction: column;
+  }
+
+  .translator {
+    grid-template-columns: 1fr;
+  }
+
+  .pane + .pane {
+    border-left: 0;
+    border-top: 1px solid var(--line);
+  }
+
+  textarea,
+  output {
+    min-height: 260px;
+  }
+}
