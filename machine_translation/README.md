@@ -54,11 +54,34 @@ data/raw/sample_submission.csv
 
 Raw competition data and external corpora must not be committed.
 
+If Kaggle CLI is configured:
+
+```bash
+./scripts/download_kaggle.sh
+```
+
 Expected columns are inferred from common names:
 
 - source: `akkadian`, `source`, `src`, `transliteration`, or `text`;
 - target: `english`, `target`, `translation`, or `tgt`;
 - id: `id`.
+
+Inspect downloaded files before training:
+
+```bash
+python scripts/inspect_data.py data/raw/train.csv data/raw/test.csv data/raw/sample_submission.csv
+```
+
+For every external corpus, check exact and near duplicates against Kaggle test sources:
+
+```bash
+python scripts/check_leakage.py \
+  --reference data/raw/test.csv \
+  --candidate data/external/oracc_clean.csv \
+  --normalize
+```
+
+If exact or near overlaps are found, remove them from the external corpus before training.
 
 ## Prepare Dev Split
 
