@@ -241,6 +241,17 @@ Required metrics to report:
 - COMET as auxiliary metric;
 - Kaggle public/private leaderboard score.
 
+Current local baseline metrics:
+
+| Run | BLEU on dev | chrF++ on dev | Notes |
+|---|---:|---:|---|
+| ByT5-small raw, 1 epoch, greedy, max target length 128 | 0.2666 | 10.3048 | `model/baseline_raw`, dev size 157 |
+
+Kaggle API submission note: the current baseline `data/results.csv` was generated successfully,
+but Kaggle returned `400 Bad Request` on submission creation after the competition deadline
+listed by the API as `2026-03-23 23:59:00`. Keep the file for manual late-submission attempts
+or attach it in the homework report if late submissions remain closed.
+
 ## Beam Search Sweep
 
 ```bash
@@ -257,7 +268,7 @@ Fill this table after running experiments.
 
 | Technique | chrF++ on dev | Kaggle public LB | Notes |
 |---|---:|---:|---|
-| Baseline ByT5-small, greedy, no normalization | TODO | TODO | Kaggle train only |
+| Baseline ByT5-small, greedy, no normalization | 10.3048 | unavailable | Kaggle API late submission blocked after deadline |
 | Orthography normalization | TODO | TODO | Rules documented above |
 | Beam search, beam size sweep `{1, 4, 8}` | TODO | TODO | Pick best dev chrF++ |
 | Mini-ensemble, 2 checkpoints | TODO | TODO | Different seeds or model sizes |
