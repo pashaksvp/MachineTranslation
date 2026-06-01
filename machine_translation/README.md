@@ -57,8 +57,12 @@ Raw competition data and external corpora must not be committed.
 If Kaggle CLI is configured:
 
 ```bash
+./.venv/bin/kaggle auth login
 ./scripts/download_kaggle.sh
 ```
+
+If using the local virtual environment, the script will use `.venv/bin/kaggle`
+automatically after dependencies are installed.
 
 Expected columns are inferred from common names:
 
@@ -71,6 +75,15 @@ Inspect downloaded files before training:
 ```bash
 python scripts/inspect_data.py data/raw/train.csv data/raw/test.csv data/raw/sample_submission.csv
 ```
+
+Or run the complete data stage in one command:
+
+```bash
+python scripts/run_data_stage.py
+```
+
+This validates the required Kaggle files, prints dataset statistics, and creates both raw
+and normalized train/dev splits.
 
 For every external corpus, check exact and near duplicates against Kaggle test sources:
 
@@ -88,13 +101,18 @@ If exact or near overlaps are found, remove them from the external corpus before
 Baseline split without normalization:
 
 ```bash
-python scripts/prepare_split.py --dataset data/raw/train.csv
+python scripts/prepare_split.py \
+  --dataset data/raw/train.csv \
+  --output-dir data/processed/raw
 ```
 
 Normalized split:
 
 ```bash
-python scripts/prepare_split.py --dataset data/raw/train.csv --normalize
+python scripts/prepare_split.py \
+  --dataset data/raw/train.csv \
+  --output-dir data/processed/normalized \
+  --normalize
 ```
 
 The current normalizer:
@@ -113,7 +131,7 @@ The current normalizer:
 Default model: `google/byt5-small`.
 
 ```bash
-python model.py train --dataset data/processed/train_split.csv
+python model.py train --dataset data/processed/raw/train_split.csv
 ```
 
 The model is saved to:

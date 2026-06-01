@@ -6,14 +6,18 @@ OUT_DIR="${1:-data/raw}"
 
 mkdir -p "${OUT_DIR}"
 
-if ! command -v kaggle >/dev/null 2>&1; then
+if [ -x ".venv/bin/kaggle" ]; then
+  KAGGLE_BIN=".venv/bin/kaggle"
+elif command -v kaggle >/dev/null 2>&1; then
+  KAGGLE_BIN="kaggle"
+else
   echo "Kaggle CLI is not installed."
-  echo "Install it with: pip install kaggle"
-  echo "Then configure ~/.kaggle/kaggle.json from your Kaggle account settings."
+  echo "Install project dependencies with: pip install -e \".[dev]\""
+  echo "Then authenticate with: kaggle auth login"
   exit 1
 fi
 
-kaggle competitions download -c "${COMPETITION}" -p "${OUT_DIR}"
+"${KAGGLE_BIN}" competitions download -c "${COMPETITION}" -p "${OUT_DIR}"
 
 ARCHIVE="${OUT_DIR}/${COMPETITION}.zip"
 if [ -f "${ARCHIVE}" ]; then
