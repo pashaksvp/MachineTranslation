@@ -188,6 +188,16 @@ Required metrics to report:
 - COMET as auxiliary metric;
 - Kaggle public/private leaderboard score.
 
+## Beam Search Sweep
+
+```bash
+python scripts/run_beam_sweep.py \
+  --dataset data/processed/raw/dev_split.csv \
+  --model-dir model/baseline_raw \
+  --beams 1,4,8 \
+  --output data/processed/raw/beam_sweep.csv
+```
+
 ## Mandatory Ablations
 
 Fill this table after running experiments.
