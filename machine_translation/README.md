@@ -223,6 +223,17 @@ python scripts/evaluate.py \
   --predictions-out data/processed/raw/dev_predictions.csv
 ```
 
+For a quick smoke evaluation on a small subset:
+
+```bash
+python scripts/evaluate.py \
+  --dataset data/processed/raw/dev_split.csv \
+  --model-dir model/baseline_raw \
+  --num-beams 1 \
+  --limit 20 \
+  --predictions-out data/processed/raw/dev_predictions_smoke.csv
+```
+
 Required metrics to report:
 
 - BLEU with sacreBLEU;

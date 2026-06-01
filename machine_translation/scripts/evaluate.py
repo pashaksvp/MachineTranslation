@@ -23,9 +23,12 @@ def main() -> None:
     parser.add_argument("--max-source-length", type=int, default=256)
     parser.add_argument("--max-target-length", type=int, default=256)
     parser.add_argument("--predictions-out", default=None)
+    parser.add_argument("--limit", type=int, default=None, help="Evaluate only the first N rows")
     args = parser.parse_args()
 
     df = pd.read_csv(args.dataset)
+    if args.limit is not None:
+        df = df.head(args.limit)
     columns = infer_columns(df, has_target=True)
     translator = MyTranslatorModel(
         model_name=args.model_name,
@@ -35,14 +38,16 @@ def main() -> None:
         max_source_length=args.max_source_length,
         max_target_length=args.max_target_length,
     )
-    predictions = [
-        str(translator.predict(text, stream=False)) for text in df[columns.source].astype(str).tolist()
-    ]
+    predictions = []
+    sources = df[columns.source].astype(str).tolist()
+    for index, text in enumerate(sources, start=1):
+        print(f"predicting {index}/{len(sources)}", flush=True)
+        predictions.append(str(translator.predict(text, stream=False)))
     references = df[columns.target].astype(str).tolist()
     if args.predictions_out:
         output = pd.DataFrame(
             {
-                "source": df[columns.source].astype(str),
+                "source": sources,
                 "reference": references,
                 "prediction": predictions,
             }

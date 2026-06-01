@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 import time
 from pathlib import Path
 from typing import Iterator
@@ -67,6 +68,8 @@ class MyTranslatorModel:
 
     def train(self, dataset_path: str) -> None:
         """Fine-tune the forward model and save it to ./model/."""
+        os.environ.setdefault("WANDB_MODE", "offline")
+
         from datasets import Dataset
         from transformers import (
             AutoModelForSeq2SeqLM,
@@ -102,7 +105,6 @@ class MyTranslatorModel:
         output_dir = Path("outputs") / self.model_dir.name
         args = Seq2SeqTrainingArguments(
             output_dir=str(output_dir),
-            overwrite_output_dir=True,
             learning_rate=self.learning_rate,
             per_device_train_batch_size=self.per_device_train_batch_size,
             gradient_accumulation_steps=self.gradient_accumulation_steps,
@@ -121,7 +123,7 @@ class MyTranslatorModel:
             model=model,
             args=args,
             train_dataset=tokenized,
-            tokenizer=tokenizer,
+            processing_class=tokenizer,
             data_collator=collator,
         )
         trainer.train()
