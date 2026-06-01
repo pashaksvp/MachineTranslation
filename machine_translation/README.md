@@ -133,7 +133,10 @@ Default model: `google/byt5-small`.
 ```bash
 python model.py train \
   --dataset data/processed/raw/train_split.csv \
-  --model-dir model/baseline_raw
+  --model-dir model/baseline_raw \
+  --seed 42 \
+  --num-train-epochs 3 \
+  --learning-rate 5e-4
 ```
 
 The model is saved to:
@@ -143,6 +146,44 @@ model/
 ```
 
 Weights are intentionally ignored by git. Upload final weights to Hugging Face Hub, W&B, or ClearML.
+
+For the orthography normalization ablation:
+
+```bash
+python model.py train \
+  --dataset data/processed/normalized/train_split.csv \
+  --model-dir model/baseline_normalized \
+  --normalize \
+  --seed 42 \
+  --num-train-epochs 3 \
+  --learning-rate 5e-4
+```
+
+For the mini-ensemble ablation, train at least two checkpoints with different seeds:
+
+```bash
+python model.py train \
+  --dataset data/processed/raw/train_split.csv \
+  --model-dir model/baseline_seed_42 \
+  --seed 42
+
+python model.py train \
+  --dataset data/processed/raw/train_split.csv \
+  --model-dir model/baseline_seed_777 \
+  --seed 777
+```
+
+Then evaluate the checkpoints and export predictions from the best dev chrF++ model:
+
+```bash
+python scripts/run_ensemble.py \
+  --dev-dataset data/processed/raw/dev_split.csv \
+  --test-dataset data/raw/test.csv \
+  --model-dirs model/baseline_seed_42,model/baseline_seed_777 \
+  --num-beams 4 \
+  --metrics-out data/processed/raw/ensemble_metrics.csv \
+  --submission-out data/results.csv
+```
 
 ## Predict One Sentence
 

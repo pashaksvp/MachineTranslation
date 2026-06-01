@@ -27,6 +27,11 @@ class MyTranslatorModel:
         normalize: bool = False,
         num_beams: int = 4,
         num_return_sequences: int = 1,
+        learning_rate: float = 5e-4,
+        per_device_train_batch_size: int = 4,
+        gradient_accumulation_steps: int = 4,
+        num_train_epochs: float = 3.0,
+        seed: int = 42,
     ) -> None:
         self.model_name = model_name
         self.model_dir = Path(model_dir)
@@ -35,6 +40,11 @@ class MyTranslatorModel:
         self.normalize = normalize
         self.num_beams = num_beams
         self.num_return_sequences = num_return_sequences
+        self.learning_rate = learning_rate
+        self.per_device_train_batch_size = per_device_train_batch_size
+        self.gradient_accumulation_steps = gradient_accumulation_steps
+        self.num_train_epochs = num_train_epochs
+        self.seed = seed
         self.logger = get_logger()
         self._tokenizer = None
         self._model = None
@@ -89,17 +99,22 @@ class MyTranslatorModel:
             return model_inputs
 
         tokenized = dataset.map(preprocess, batched=True, remove_columns=dataset.column_names)
+        output_dir = Path("outputs") / self.model_dir.name
         args = Seq2SeqTrainingArguments(
-            output_dir="outputs/byt5",
-            learning_rate=5e-4,
-            per_device_train_batch_size=4,
-            gradient_accumulation_steps=4,
-            num_train_epochs=3,
+            output_dir=str(output_dir),
+            overwrite_output_dir=True,
+            learning_rate=self.learning_rate,
+            per_device_train_batch_size=self.per_device_train_batch_size,
+            gradient_accumulation_steps=self.gradient_accumulation_steps,
+            num_train_epochs=self.num_train_epochs,
             save_strategy="epoch",
+            save_total_limit=2,
             logging_steps=25,
             report_to=["wandb"],
             predict_with_generate=True,
             fp16=False,
+            seed=self.seed,
+            data_seed=self.seed,
         )
         collator = DataCollatorForSeq2Seq(tokenizer=tokenizer, model=model)
         trainer = Seq2SeqTrainer(
