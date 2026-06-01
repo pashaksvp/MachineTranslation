@@ -131,7 +131,9 @@ The current normalizer:
 Default model: `google/byt5-small`.
 
 ```bash
-python model.py train --dataset data/processed/raw/train_split.csv
+python model.py train \
+  --dataset data/processed/raw/train_split.csv \
+  --model-dir model/baseline_raw
 ```
 
 The model is saved to:
@@ -145,13 +147,19 @@ Weights are intentionally ignored by git. Upload final weights to Hugging Face H
 ## Predict One Sentence
 
 ```bash
-python model.py predict --text "šarrum ana ālim illik"
+python model.py predict \
+  --text "šarrum ana ālim illik" \
+  --model-dir model/baseline_raw \
+  --num-beams 4
 ```
 
 ## Export Kaggle Submission
 
 ```bash
-python model.py predict-file --dataset data/raw/test.csv
+python model.py predict-file \
+  --dataset data/raw/test.csv \
+  --model-dir model/baseline_raw \
+  --num-beams 4
 ```
 
 Output:
@@ -166,7 +174,11 @@ different exact column name.
 ## Evaluate Dev Metrics
 
 ```bash
-python scripts/evaluate.py --dataset data/processed/dev_split.csv
+python scripts/evaluate.py \
+  --dataset data/processed/raw/dev_split.csv \
+  --model-dir model/baseline_raw \
+  --num-beams 4 \
+  --predictions-out data/processed/raw/dev_predictions.csv
 ```
 
 Required metrics to report:

@@ -13,8 +13,23 @@ from akkadian_mt.translator import MyTranslatorModel
 class My_Translator_Model:
     """Required homework API wrapper."""
 
-    def __init__(self) -> None:
-        self.model = MyTranslatorModel()
+    def __init__(
+        self,
+        model_name: str = "google/byt5-small",
+        model_dir: str = "./model",
+        max_source_length: int = 256,
+        max_target_length: int = 256,
+        normalize: bool = False,
+        num_beams: int = 4,
+    ) -> None:
+        self.model = MyTranslatorModel(
+            model_name=model_name,
+            model_dir=model_dir,
+            max_source_length=max_source_length,
+            max_target_length=max_target_length,
+            normalize=normalize,
+            num_beams=num_beams,
+        )
 
     def train(self, dataset_path: str) -> None:
         self.model.train(dataset_path)
@@ -32,16 +47,40 @@ def main() -> None:
 
     train_parser = subparsers.add_parser("train")
     train_parser.add_argument("--dataset", required=True)
+    train_parser.add_argument("--model-name", default="google/byt5-small")
+    train_parser.add_argument("--model-dir", default="./model")
+    train_parser.add_argument("--max-source-length", type=int, default=256)
+    train_parser.add_argument("--max-target-length", type=int, default=256)
+    train_parser.add_argument("--normalize", action="store_true")
 
     predict_parser = subparsers.add_parser("predict")
     predict_parser.add_argument("--text", required=True)
+    predict_parser.add_argument("--model-name", default="google/byt5-small")
+    predict_parser.add_argument("--model-dir", default="./model")
+    predict_parser.add_argument("--max-source-length", type=int, default=256)
+    predict_parser.add_argument("--max-target-length", type=int, default=256)
+    predict_parser.add_argument("--normalize", action="store_true")
+    predict_parser.add_argument("--num-beams", type=int, default=4)
     predict_parser.add_argument("--no-stream", action="store_true")
 
     predict_file_parser = subparsers.add_parser("predict-file")
     predict_file_parser.add_argument("--dataset", required=True)
+    predict_file_parser.add_argument("--model-name", default="google/byt5-small")
+    predict_file_parser.add_argument("--model-dir", default="./model")
+    predict_file_parser.add_argument("--max-source-length", type=int, default=256)
+    predict_file_parser.add_argument("--max-target-length", type=int, default=256)
+    predict_file_parser.add_argument("--normalize", action="store_true")
+    predict_file_parser.add_argument("--num-beams", type=int, default=4)
 
     args = parser.parse_args()
-    translator = My_Translator_Model()
+    translator = My_Translator_Model(
+        model_name=args.model_name,
+        model_dir=args.model_dir,
+        max_source_length=args.max_source_length,
+        max_target_length=args.max_target_length,
+        normalize=args.normalize,
+        num_beams=getattr(args, "num_beams", 4),
+    )
 
     if args.command == "train":
         translator.train(args.dataset)
