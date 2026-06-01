@@ -62,7 +62,8 @@ If Kaggle CLI is configured:
 ```
 
 If using the local virtual environment, the script will use `.venv/bin/kaggle`
-automatically after dependencies are installed.
+automatically after dependencies are installed. The script downloads only the required
+competition files: `train.csv`, `test.csv`, and `sample_submission.csv`.
 
 Expected columns are inferred from common names:
 

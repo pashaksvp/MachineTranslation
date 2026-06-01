@@ -3,6 +3,7 @@ set -euo pipefail
 
 COMPETITION="deep-past-initiative-machine-translation"
 OUT_DIR="${1:-data/raw}"
+FILES=("train.csv" "test.csv" "sample_submission.csv")
 
 mkdir -p "${OUT_DIR}"
 
@@ -17,12 +18,13 @@ else
   exit 1
 fi
 
-"${KAGGLE_BIN}" competitions download -c "${COMPETITION}" -p "${OUT_DIR}"
-
-ARCHIVE="${OUT_DIR}/${COMPETITION}.zip"
-if [ -f "${ARCHIVE}" ]; then
-  unzip -o "${ARCHIVE}" -d "${OUT_DIR}"
-fi
+for FILE in "${FILES[@]}"; do
+  "${KAGGLE_BIN}" competitions download -c "${COMPETITION}" -f "${FILE}" -p "${OUT_DIR}"
+  ARCHIVE="${OUT_DIR}/${FILE}.zip"
+  if [ -f "${ARCHIVE}" ]; then
+    unzip -o "${ARCHIVE}" -d "${OUT_DIR}"
+  fi
+done
 
 echo "Downloaded files:"
 find "${OUT_DIR}" -maxdepth 1 -type f -print
