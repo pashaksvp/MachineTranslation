@@ -45,11 +45,15 @@ class MyTranslatorModel:
 
         from transformers import AutoModelForSeq2SeqLM, AutoTokenizer
 
-        load_path = self.model_dir if self.model_dir.exists() else self.model_name
+        load_path = self.model_dir if self._has_local_checkpoint() else self.model_name
         self.logger.info("Loading model from %s", load_path)
-        self._tokenizer = AutoTokenizer.from_pretrained(load_path)
+        self._tokenizer = AutoTokenizer.from_pretrained(load_path, use_fast=False)
         self._model = AutoModelForSeq2SeqLM.from_pretrained(load_path)
         self._model.eval()
+
+    def _has_local_checkpoint(self) -> bool:
+        """Return True only when ./model looks like a saved Hugging Face checkpoint."""
+        return self.model_dir.is_dir() and (self.model_dir / "config.json").exists()
 
     def train(self, dataset_path: str) -> None:
         """Fine-tune the forward model and save it to ./model/."""
@@ -66,7 +70,7 @@ class MyTranslatorModel:
         df = load_parallel_csv(dataset_path, normalize=self.normalize)
         dataset = Dataset.from_pandas(df, preserve_index=False)
 
-        tokenizer = AutoTokenizer.from_pretrained(self.model_name)
+        tokenizer = AutoTokenizer.from_pretrained(self.model_name, use_fast=False)
         model = AutoModelForSeq2SeqLM.from_pretrained(self.model_name)
 
         def preprocess(batch: dict[str, list[str]]) -> dict[str, list[list[int]]]:
