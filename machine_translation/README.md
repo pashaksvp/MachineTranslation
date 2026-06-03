@@ -246,6 +246,8 @@ Current local baseline metrics:
 | Run | BLEU on dev | chrF++ on dev | Notes |
 |---|---:|---:|---|
 | ByT5-small raw, 1 epoch, greedy, max target length 128 | 0.2666 | 10.3048 | `model/baseline_raw`, dev size 157 |
+| ByT5-small raw, 1 epoch, beam size 4, max target length 128 | 0.2369 | 10.1660 | `model/baseline_raw`, dev size 157 |
+| ByT5-small raw, 1 epoch, beam size 8, max target length 128 | 0.2466 | 10.0706 | `model/baseline_raw`, dev size 157 |
 | ByT5-small normalized, 1 epoch, greedy, max target length 128 | 0.1648 | 9.2342 | `model/baseline_normalized`, dev size 157 |
 
 Kaggle API submission note: the current baseline `data/results.csv` was generated successfully,
@@ -259,8 +261,9 @@ or attach it in the homework report if late submissions remain closed.
 python scripts/run_beam_sweep.py \
   --dataset data/processed/raw/dev_split.csv \
   --model-dir model/baseline_raw \
-  --beams 1,4,8 \
-  --output data/processed/raw/beam_sweep.csv
+  --beams 4,8 \
+  --max-target-length 128 \
+  --output data/processed/raw/beam_sweep_4_8.csv
 ```
 
 ## Mandatory Ablations
@@ -271,7 +274,7 @@ Fill this table after running experiments.
 |---|---:|---:|---|
 | Baseline ByT5-small, greedy, no normalization | 10.3048 | unavailable | Kaggle API late submission blocked after deadline |
 | Orthography normalization | 9.2342 | unavailable | Worse than raw for the 1-epoch local baseline |
-| Beam search, beam size sweep `{1, 4, 8}` | TODO | TODO | Pick best dev chrF++ |
+| Beam search, beam size sweep `{1, 4, 8}` | 10.3048 | unavailable | Greedy/beam=1 won; beam=4: 10.1660, beam=8: 10.0706 |
 | Mini-ensemble, 2 checkpoints | TODO | TODO | Different seeds or model sizes |
 
 ## Streaming Service

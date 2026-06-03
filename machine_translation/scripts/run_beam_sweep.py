@@ -33,9 +33,12 @@ def main() -> None:
     parser.add_argument("--max-source-length", type=int, default=256)
     parser.add_argument("--max-target-length", type=int, default=256)
     parser.add_argument("--output", default="data/processed/beam_sweep.csv")
+    parser.add_argument("--limit", type=int, default=None, help="Evaluate only the first N rows")
     args = parser.parse_args()
 
     df = pd.read_csv(args.dataset)
+    if args.limit is not None:
+        df = df.head(args.limit)
     columns = infer_columns(df, has_target=True)
     sources = df[columns.source].astype(str).tolist()
     references = df[columns.target].astype(str).tolist()
@@ -53,7 +56,10 @@ def main() -> None:
             max_source_length=args.max_source_length,
             max_target_length=args.max_target_length,
         )
-        predictions = [str(translator.predict(text, stream=False)) for text in sources]
+        predictions = []
+        for index, text in enumerate(sources, start=1):
+            print(f"beams={beam} predicting {index}/{len(sources)}", flush=True)
+            predictions.append(str(translator.predict(text, stream=False)))
         bleu = compute_bleu(predictions, references)
         chrfpp = compute_chrfpp(predictions, references)
         row = {"num_beams": beam, "bleu": bleu, "chrfpp": chrfpp}
