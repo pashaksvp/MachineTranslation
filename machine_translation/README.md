@@ -246,6 +246,7 @@ Current local baseline metrics:
 | Run | BLEU on dev | chrF++ on dev | Notes |
 |---|---:|---:|---|
 | ByT5-small raw, 1 epoch, greedy, max target length 128 | 0.2666 | 10.3048 | `model/baseline_raw`, dev size 157 |
+| ByT5-small normalized, 1 epoch, greedy, max target length 128 | 0.1648 | 9.2342 | `model/baseline_normalized`, dev size 157 |
 
 Kaggle API submission note: the current baseline `data/results.csv` was generated successfully,
 but Kaggle returned `400 Bad Request` on submission creation after the competition deadline
@@ -269,7 +270,7 @@ Fill this table after running experiments.
 | Technique | chrF++ on dev | Kaggle public LB | Notes |
 |---|---:|---:|---|
 | Baseline ByT5-small, greedy, no normalization | 10.3048 | unavailable | Kaggle API late submission blocked after deadline |
-| Orthography normalization | TODO | TODO | Rules documented above |
+| Orthography normalization | 9.2342 | unavailable | Worse than raw for the 1-epoch local baseline |
 | Beam search, beam size sweep `{1, 4, 8}` | TODO | TODO | Pick best dev chrF++ |
 | Mini-ensemble, 2 checkpoints | TODO | TODO | Different seeds or model sizes |
 
