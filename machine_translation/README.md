@@ -248,6 +248,8 @@ Current local baseline metrics:
 | ByT5-small raw, 1 epoch, greedy, max target length 128 | 0.2666 | 10.3048 | `model/baseline_raw`, dev size 157 |
 | ByT5-small raw, 1 epoch, beam size 4, max target length 128 | 0.2369 | 10.1660 | `model/baseline_raw`, dev size 157 |
 | ByT5-small raw, 1 epoch, beam size 8, max target length 128 | 0.2466 | 10.0706 | `model/baseline_raw`, dev size 157 |
+| ByT5-small raw, seed 777, 1 epoch, greedy, max target length 128 | 0.0838 | 8.3695 | `model/baseline_seed_777`, dev size 157 |
+| Mini-ensemble best-dev selector, seeds 42 and 777 | 0.2666 | 10.3048 | selected `model/baseline_raw` |
 | ByT5-small normalized, 1 epoch, greedy, max target length 128 | 0.1648 | 9.2342 | `model/baseline_normalized`, dev size 157 |
 
 Kaggle API submission note: the current baseline `data/results.csv` was generated successfully,
@@ -275,7 +277,7 @@ Fill this table after running experiments.
 | Baseline ByT5-small, greedy, no normalization | 10.3048 | unavailable | Kaggle API late submission blocked after deadline |
 | Orthography normalization | 9.2342 | unavailable | Worse than raw for the 1-epoch local baseline |
 | Beam search, beam size sweep `{1, 4, 8}` | 10.3048 | unavailable | Greedy/beam=1 won; beam=4: 10.1660, beam=8: 10.0706 |
-| Mini-ensemble, 2 checkpoints | TODO | TODO | Different seeds or model sizes |
+| Mini-ensemble, 2 checkpoints | 10.3048 | unavailable | Seeds 42/777; best-dev selector picked seed 42 |
 
 ## Streaming Service
 
