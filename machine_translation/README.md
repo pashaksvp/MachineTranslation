@@ -307,6 +307,17 @@ curl -N -X POST http://localhost:8080/translate \
   -d '{"text":"šarrum ana ālim illik"}'
 ```
 
+Local SSE check passed with `model/baseline_raw`. Example streamed chunks:
+
+```text
+data: {"token": "To "}
+data: {"token": "Ali-ahum "}
+data: {"token": "son "}
+data: {"token": "of "}
+data: {"token": "Ilīk. "}
+data: {"done": "true"}
+```
+
 ## Docker
 
 CPU profile:
@@ -330,6 +341,10 @@ docker compose --profile gpu up --build
 Final production path for this homework should use **ByT5 + HuggingFace TGI** for true
 encoder-decoder token streaming. The current gateway and UI are already SSE-compatible.
 
+Local Docker verification status: not run on the current machine because Docker CLI is not
+installed (`docker: command not found`). The compose file is present and should be checked on
+a Docker-enabled host before final submission.
+
 ## Latency Benchmark
 
 ```bash
@@ -341,6 +356,12 @@ Report:
 - median TTFT;
 - p95 TTFT;
 - tokens/sec.
+
+Measured locally after model warmup:
+
+| Backend | Device | Median TTFT | p95 TTFT | Median tokens/sec |
+|---|---|---:|---:|---:|
+| FastAPI + local ByT5-small checkpoint | Apple MPS/local Mac | 0.5120s | 0.5127s | 40.37 |
 
 ## Experiment Tracking
 

@@ -11,6 +11,9 @@ services:
     environment:
       - PYTHONPATH=/app/src
       - WANDB_MODE=offline
+      - MODEL_DIR=/app/model/baseline_raw
+      - NUM_BEAMS=1
+      - MAX_TARGET_LENGTH=128
     profiles: ["cpu"]
 
   # For the final ByT5 path, run TGI separately and point the gateway to it.
