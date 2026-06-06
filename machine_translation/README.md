@@ -1,6 +1,9 @@
 # Homework 3: Akkadian Streaming Translator
 
-TODO: full name, group number.
+## Author
+
+- Full name: TODO
+- Group: TODO
 
 This repository implements an end-to-end low-resource NMT project for the Kaggle competition
 **Deep Past Initiative: Machine Translation**, direction **Akkadian transliteration -> English**.
@@ -13,6 +16,15 @@ The project is built in stages:
 4. Kaggle prediction export;
 5. streaming translator API and web UI;
 6. Docker Compose deployment.
+
+## Current Status
+
+- Kaggle data downloaded and split into raw and normalized train/dev sets.
+- ByT5-small baseline trained locally for 1 epoch.
+- Required ablations completed: orthography normalization, beam search, mini-ensemble.
+- Kaggle-format `data/results.csv` generated. Kaggle API late submission is unavailable after the public competition deadline.
+- FastAPI SSE backend and web UI verified locally.
+- Docker Compose file is present, but Docker CLI is not installed on the current machine, so container verification is still pending.
 
 ## Current Architecture
 
@@ -378,22 +390,30 @@ For final submission, sync runs and attach:
 - dev BLEU / chrF++;
 - best checkpoint artifact.
 
+Local W&B offline runs:
+
+```text
+wandb/offline-run-20260601_232749-d83o4fyw  # raw baseline seed 42
+wandb/offline-run-20260603_131813-6rv810mu  # normalized baseline
+wandb/offline-run-20260604_151724-gblbyz58  # raw baseline seed 777
+```
+
 ## Dataset And License Log
 
 | Dataset | Purpose | License / Terms | Leakage Check |
 |---|---|---|---|
 | Kaggle Deep Past train.csv | supervised training | Kaggle competition terms | official train only |
-| ORACC | optional monolingual/external data | TODO | exact + near duplicate vs test |
-| CDLI | optional external data | TODO | exact + near duplicate vs test |
+| Kaggle Deep Past test.csv | Kaggle prediction export | Kaggle competition terms | never used for training |
+| External corpora | not used in current local run | n/a | n/a |
 
 ## Submission Checklist
 
-- [ ] Public GitHub/GitLab repo.
-- [ ] `main` and `develop` branches.
+- [x] Public GitHub/GitLab repo.
+- [x] `main` and `develop` branches.
 - [ ] `README.md` has full name and group.
 - [ ] Kaggle leaderboard screenshot is added.
 - [ ] Streaming UI GIF/video is added.
-- [ ] `data/log_file.log` is visible inside the container.
-- [ ] No model weights or raw corpora are committed.
-- [ ] W&B or ClearML run links are added.
-- [ ] Docker Compose starts the service.
+- [x] `data/log_file.log` is created by the singleton logger.
+- [x] No model weights or raw corpora are committed.
+- [x] W&B offline runs are recorded locally.
+- [ ] Docker Compose starts the service on a Docker-enabled host.
