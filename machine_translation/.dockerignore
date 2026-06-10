@@ -1,0 +1,25 @@
+.DS_Store
+.env
+.git
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+
+# Runtime artifacts are mounted by docker-compose volumes.
+data/raw/
+data/external/
+data/processed/
+data/results.csv
+data/*.log
+model/
+outputs/
+wandb/
+
+# Keep source and README demo, skip accidental large media.
+*.mov
+*.gif
+*.mp4
+!docs/streaming-demo.mp4
+

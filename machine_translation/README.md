@@ -382,6 +382,9 @@ CPU profile:
 docker compose --profile cpu up --build
 ```
 
+The image build context excludes raw corpora, checkpoints, `.venv`, and W&B artifacts through
+`.dockerignore`; runtime `./model` and `./data` are mounted as volumes by Compose.
+
 Then open:
 
 ```text
