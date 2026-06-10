@@ -244,6 +244,14 @@ Output:
 data/results.csv
 ```
 
+Validate the file before upload:
+
+```bash
+python scripts/validate_submission.py \
+  --sample data/raw/sample_submission.csv \
+  --submission data/results.csv
+```
+
 Check the competition sample submission and rename the prediction column if Kaggle requires a
 different exact column name.
 

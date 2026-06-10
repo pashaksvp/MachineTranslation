@@ -48,6 +48,7 @@ packages = ["src/akkadian_mt"]
 "model.py" = "model.py"
 "api" = "api"
 "web" = "web"
+"scripts" = "scripts"
 
 [tool.ruff]
 line-length = 100
