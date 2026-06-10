@@ -28,6 +28,7 @@ class MyTranslatorModel:
         normalize: bool = False,
         num_beams: int = 4,
         num_return_sequences: int = 1,
+        selector_strategy: str = "first_non_empty",
         learning_rate: float = 5e-4,
         per_device_train_batch_size: int = 4,
         gradient_accumulation_steps: int = 4,
@@ -41,6 +42,7 @@ class MyTranslatorModel:
         self.normalize = normalize
         self.num_beams = num_beams
         self.num_return_sequences = num_return_sequences
+        self.selector_strategy = selector_strategy
         self.learning_rate = learning_rate
         self.per_device_train_batch_size = per_device_train_batch_size
         self.gradient_accumulation_steps = gradient_accumulation_steps
@@ -65,6 +67,18 @@ class MyTranslatorModel:
     def _has_local_checkpoint(self) -> bool:
         """Return True only when ./model looks like a saved Hugging Face checkpoint."""
         return self.model_dir.is_dir() and (self.model_dir / "config.json").exists()
+
+    def _select_candidate(self, candidates: list[str]) -> str:
+        if not candidates:
+            return ""
+        if self.selector_strategy == "first_non_empty":
+            for candidate in candidates:
+                if candidate.strip():
+                    return candidate
+            return candidates[0]
+        if self.selector_strategy == "longest":
+            return max(candidates, key=lambda candidate: len(candidate.split()))
+        raise ValueError(f"Unsupported selector_strategy={self.selector_strategy!r}")
 
     def train(self, dataset_path: str) -> None:
         """Fine-tune the forward model and save it to ./model/."""
@@ -140,6 +154,9 @@ class MyTranslatorModel:
         source = normalize_akkadian(text) if self.normalize else text
         prompt = f"translate Akkadian to English: {source}"
         inputs = self._tokenizer(prompt, return_tensors="pt", truncation=True)
+        if self.num_return_sequences > self.num_beams:
+            raise ValueError("num_return_sequences must be less than or equal to num_beams")
+
         output_ids = self._model.generate(
             **inputs,
             max_new_tokens=self.max_target_length,
@@ -147,7 +164,11 @@ class MyTranslatorModel:
             num_return_sequences=self.num_return_sequences,
             do_sample=False,
         )
-        translation = self._tokenizer.decode(output_ids[0], skip_special_tokens=True).strip()
+        candidates = [
+            self._tokenizer.decode(candidate_ids, skip_special_tokens=True).strip()
+            for candidate_ids in output_ids
+        ]
+        translation = self._select_candidate(candidates)
 
         if not stream:
             return translation

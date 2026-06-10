@@ -21,6 +21,8 @@ class My_Translator_Model:
         max_target_length: int = 256,
         normalize: bool = False,
         num_beams: int = 4,
+        num_return_sequences: int = 1,
+        selector_strategy: str = "first_non_empty",
         learning_rate: float = 5e-4,
         per_device_train_batch_size: int = 4,
         gradient_accumulation_steps: int = 4,
@@ -34,6 +36,8 @@ class My_Translator_Model:
             max_target_length=max_target_length,
             normalize=normalize,
             num_beams=num_beams,
+            num_return_sequences=num_return_sequences,
+            selector_strategy=selector_strategy,
             learning_rate=learning_rate,
             per_device_train_batch_size=per_device_train_batch_size,
             gradient_accumulation_steps=gradient_accumulation_steps,
@@ -76,6 +80,8 @@ def main() -> None:
     predict_parser.add_argument("--max-target-length", type=int, default=256)
     predict_parser.add_argument("--normalize", action="store_true")
     predict_parser.add_argument("--num-beams", type=int, default=4)
+    predict_parser.add_argument("--num-return-sequences", type=int, default=1)
+    predict_parser.add_argument("--selector-strategy", default="first_non_empty")
     predict_parser.add_argument("--no-stream", action="store_true")
 
     predict_file_parser = subparsers.add_parser("predict-file")
@@ -86,6 +92,8 @@ def main() -> None:
     predict_file_parser.add_argument("--max-target-length", type=int, default=256)
     predict_file_parser.add_argument("--normalize", action="store_true")
     predict_file_parser.add_argument("--num-beams", type=int, default=4)
+    predict_file_parser.add_argument("--num-return-sequences", type=int, default=1)
+    predict_file_parser.add_argument("--selector-strategy", default="first_non_empty")
 
     args = parser.parse_args()
     translator = My_Translator_Model(
@@ -95,6 +103,8 @@ def main() -> None:
         max_target_length=args.max_target_length,
         normalize=args.normalize,
         num_beams=getattr(args, "num_beams", 4),
+        num_return_sequences=getattr(args, "num_return_sequences", 1),
+        selector_strategy=getattr(args, "selector_strategy", "first_non_empty"),
         learning_rate=getattr(args, "learning_rate", 5e-4),
         per_device_train_batch_size=getattr(args, "per_device_train_batch_size", 4),
         gradient_accumulation_steps=getattr(args, "gradient_accumulation_steps", 4),

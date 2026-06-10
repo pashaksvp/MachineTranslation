@@ -162,7 +162,7 @@ python model.py train \
 The model is saved to:
 
 ```text
-model/
+model/baseline_raw/
 ```
 
 Weights are intentionally ignored by git. Upload final weights to Hugging Face Hub, W&B, or ClearML.
@@ -200,7 +200,8 @@ python scripts/run_ensemble.py \
   --dev-dataset data/processed/raw/dev_split.csv \
   --test-dataset data/raw/test.csv \
   --model-dirs model/baseline_seed_42,model/baseline_seed_777 \
-  --num-beams 4 \
+  --num-beams 1 \
+  --max-target-length 128 \
   --metrics-out data/processed/raw/ensemble_metrics.csv \
   --submission-out data/results.csv
 ```
@@ -211,7 +212,20 @@ python scripts/run_ensemble.py \
 python model.py predict \
   --text "šarrum ana ālim illik" \
   --model-dir model/baseline_raw \
-  --num-beams 4
+  --num-beams 1 \
+  --max-target-length 128
+```
+
+Multi-candidate decoding with a deterministic selector:
+
+```bash
+python model.py predict \
+  --text "šarrum ana ālim illik" \
+  --model-dir model/baseline_raw \
+  --num-beams 4 \
+  --num-return-sequences 4 \
+  --selector-strategy first_non_empty \
+  --max-target-length 128
 ```
 
 ## Export Kaggle Submission
@@ -220,7 +234,8 @@ python model.py predict \
 python model.py predict-file \
   --dataset data/raw/test.csv \
   --model-dir model/baseline_raw \
-  --num-beams 4
+  --num-beams 1 \
+  --max-target-length 128
 ```
 
 Output:
@@ -238,7 +253,8 @@ different exact column name.
 python scripts/evaluate.py \
   --dataset data/processed/raw/dev_split.csv \
   --model-dir model/baseline_raw \
-  --num-beams 4 \
+  --num-beams 1 \
+  --max-target-length 128 \
   --predictions-out data/processed/raw/dev_predictions.csv
 ```
 
