@@ -20,4 +20,4 @@ wandb/
 *.mp4
 *.mov
 *.gif
-
+!docs/streaming-demo.mp4

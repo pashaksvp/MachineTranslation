@@ -330,6 +330,8 @@ data: {"token": "Ilīk. "}
 data: {"done": "true"}
 ```
 
+Demo video: [`docs/streaming-demo.mp4`](docs/streaming-demo.mp4).
+
 ## Docker
 
 CPU profile:
@@ -412,7 +414,7 @@ wandb/offline-run-20260604_151724-gblbyz58  # raw baseline seed 777
 - [x] `main` and `develop` branches.
 - [ ] `README.md` has full name and group.
 - [ ] Kaggle leaderboard screenshot is added.
-- [ ] Streaming UI GIF/video is added.
+- [x] Streaming UI GIF/video is added.
 - [x] `data/log_file.log` is created by the singleton logger.
 - [x] No model weights or raw corpora are committed.
 - [x] W&B offline runs are recorded locally.
