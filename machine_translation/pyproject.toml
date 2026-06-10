@@ -43,7 +43,9 @@ build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/akkadian_mt"]
-include = ["model.py"]
+
+[tool.hatch.build.targets.wheel.force-include]
+"model.py" = "model.py"
 
 [tool.ruff]
 line-length = 100

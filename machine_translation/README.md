@@ -24,6 +24,7 @@ The project is built in stages:
 - Required ablations completed: orthography normalization, beam search, mini-ensemble.
 - Kaggle-format `data/results.csv` generated. Kaggle API late submission is unavailable after the public competition deadline.
 - FastAPI SSE backend and web UI verified locally.
+- Installable wheel artifact is built under `dist/`.
 - Docker Compose file is present, but Docker CLI is not installed on the current machine, so container verification is still pending.
 
 ## Current Architecture
@@ -52,6 +53,12 @@ Or with `pip`:
 python -m venv .venv
 source .venv/bin/activate
 pip install -e ".[dev]"
+```
+
+Install the packaged wheel:
+
+```bash
+pip install dist/akkadian_streaming_translator-0.1.0-py3-none-any.whl
 ```
 
 ## Data
