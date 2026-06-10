@@ -269,11 +269,23 @@ python scripts/evaluate.py \
   --predictions-out data/processed/raw/dev_predictions_smoke.csv
 ```
 
+Optional COMET evaluation:
+
+```bash
+pip install -e ".[comet]"
+python scripts/evaluate.py \
+  --dataset data/processed/raw/dev_split.csv \
+  --model-dir model/baseline_raw \
+  --num-beams 1 \
+  --max-target-length 128 \
+  --comet
+```
+
 Required metrics to report:
 
 - BLEU with sacreBLEU;
 - chrF++ with word order 2;
-- COMET as auxiliary metric;
+- COMET as auxiliary metric with `--comet` (not trained on Akkadian; treat as diagnostic);
 - Kaggle public/private leaderboard score.
 
 Current local baseline metrics:

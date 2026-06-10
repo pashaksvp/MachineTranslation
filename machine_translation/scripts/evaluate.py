@@ -9,7 +9,7 @@ import pandas as pd
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 from akkadian_mt.data import infer_columns
-from akkadian_mt.metrics import compute_bleu, compute_chrfpp
+from akkadian_mt.metrics import compute_bleu, compute_chrfpp, compute_comet
 from akkadian_mt.translator import MyTranslatorModel
 
 
@@ -24,6 +24,8 @@ def main() -> None:
     parser.add_argument("--max-target-length", type=int, default=256)
     parser.add_argument("--predictions-out", default=None)
     parser.add_argument("--limit", type=int, default=None, help="Evaluate only the first N rows")
+    parser.add_argument("--comet", action="store_true", help="Also compute COMET")
+    parser.add_argument("--comet-model", default="Unbabel/wmt22-comet-da")
     args = parser.parse_args()
 
     df = pd.read_csv(args.dataset)
@@ -56,6 +58,14 @@ def main() -> None:
         output.to_csv(args.predictions_out, index=False)
     print(f"BLEU: {compute_bleu(predictions, references):.4f}")
     print(f"chrF++: {compute_chrfpp(predictions, references):.4f}")
+    if args.comet:
+        comet_score = compute_comet(
+            predictions=predictions,
+            references=references,
+            sources=sources,
+            model_name=args.comet_model,
+        )
+        print(f"COMET: {comet_score:.4f}")
 
 
 if __name__ == "__main__":
