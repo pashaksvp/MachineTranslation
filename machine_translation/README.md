@@ -1,45 +1,45 @@
-# Homework 3: Akkadian Streaming Translator
+# Домашнее задание 3: потоковый переводчик с аккадского
 
-## Author
+## Автор
 
-- Full name: Fomin Pavel Andreevich
-- Group: 972402
+- ФИО: Фомин Павел Андреевич
+- Группа: 972402
 
-This repository implements an end-to-end low-resource NMT project for the Kaggle competition
-**Deep Past Initiative: Machine Translation**, direction **Akkadian transliteration -> English**.
+Репозиторий реализует полный пайплайн low-resource NMT для соревнования Kaggle
+**Deep Past Initiative: Machine Translation**, направление **аккадская транслитерация -> английский**.
 
-The project is built in stages:
+Проект выполнен по этапам:
 
-1. data cleaning and dev split;
-2. ByT5 baseline fine-tuning;
-3. ablations for orthography normalization, beam search, and mini-ensemble;
-4. Kaggle prediction export;
-5. streaming translator API and web UI;
-6. Docker Compose deployment.
+1. очистка данных и dev-разбиение;
+2. fine-tuning baseline-модели ByT5;
+3. ablation-эксперименты: нормализация орфографии, beam search и mini-ensemble;
+4. экспорт предсказаний в формате Kaggle;
+5. streaming translator API и web UI;
+6. deployment через Docker Compose.
 
-## Current Status
+## Текущий статус
 
-- Kaggle data downloaded and split into raw and normalized train/dev sets.
-- ByT5-small baseline trained locally for 1 epoch.
-- Required ablations completed: orthography normalization, beam search, mini-ensemble.
-- Kaggle-format `data/results.csv` generated. Kaggle API late submission is unavailable after the public competition deadline.
-- FastAPI SSE backend and web UI verified locally.
-- Installable wheel artifact is built under `dist/`.
-- Docker Compose file is present, but Docker CLI is not installed on the current machine, so container verification is still pending.
+- Данные Kaggle загружены и разбиты на raw и normalized train/dev наборы.
+- Локально обучен ByT5-small baseline на 1 эпоху.
+- Выполнены обязательные ablation-эксперименты: orthography normalization, beam search, mini-ensemble.
+- Сгенерирован Kaggle-файл `data/results.csv`. Поздняя отправка через Kaggle API недоступна после публичного дедлайна соревнования.
+- Локально проверены FastAPI SSE backend и web UI.
+- Установочный wheel-артефакт собран в `dist/`.
+- `docker-compose.yaml` подготовлен, но Docker CLI на текущей машине не установлен, поэтому проверка контейнеров пока ожидает Docker-enabled host.
 
-## Current Architecture
+## Архитектура
 
-- `model.py` contains the required `My_Translator_Model` class.
-- `src/akkadian_mt/translator.py` contains the reusable model implementation.
-- `src/akkadian_mt/normalization.py` contains Akkadian transliteration normalization rules.
-- `api/server.py` serves `/health`, `/translate`, and the web UI.
-- `web/` contains a two-pane streaming translator interface.
-- `scripts/` contains split, evaluation, and latency helpers.
-- `data/log_file.log` is created automatically by the singleton logger.
+- `model.py` содержит обязательный класс `My_Translator_Model`.
+- `src/akkadian_mt/translator.py` содержит переиспользуемую реализацию модели.
+- `src/akkadian_mt/normalization.py` содержит правила нормализации аккадской транслитерации.
+- `api/server.py` обслуживает `/health`, `/translate` и web UI.
+- `web/` содержит двухпанельный интерфейс потокового переводчика.
+- `scripts/` содержит утилиты для разбиения данных, оценки, latency benchmark и проверок перед сдачей.
+- `data/log_file.log` автоматически создается singleton-logger'ом.
 
-## Setup
+## Установка
 
-Recommended with `uv`:
+Рекомендуемый вариант с `uv`:
 
 ```bash
 uv venv
@@ -47,7 +47,7 @@ source .venv/bin/activate
 uv pip install -e ".[dev]"
 ```
 
-Or with `pip`:
+Вариант с `pip`:
 
 ```bash
 python -m venv .venv
@@ -55,15 +55,15 @@ source .venv/bin/activate
 pip install -e ".[dev]"
 ```
 
-Install the packaged wheel:
+Установка собранного wheel:
 
 ```bash
 pip install dist/akkadian_streaming_translator-0.1.0-py3-none-any.whl
 ```
 
-## Data
+## Данные
 
-Download the Kaggle competition files manually or with the Kaggle CLI and place them under:
+Файлы соревнования Kaggle нужно скачать вручную или через Kaggle CLI и положить в:
 
 ```text
 data/raw/train.csv
@@ -71,41 +71,40 @@ data/raw/test.csv
 data/raw/sample_submission.csv
 ```
 
-Raw competition data and external corpora must not be committed.
+Сырые данные соревнования и внешние корпуса нельзя коммитить в Git.
 
-If Kaggle CLI is configured:
+Если Kaggle CLI настроен:
 
 ```bash
 ./.venv/bin/kaggle auth login
 ./scripts/download_kaggle.sh
 ```
 
-If using the local virtual environment, the script will use `.venv/bin/kaggle`
-automatically after dependencies are installed. The script downloads only the required
-competition files: `train.csv`, `test.csv`, and `sample_submission.csv`.
+При использовании локального virtual environment скрипт автоматически выберет `.venv/bin/kaggle`
+после установки зависимостей. Скрипт скачивает только необходимые файлы соревнования:
+`train.csv`, `test.csv` и `sample_submission.csv`.
 
-Expected columns are inferred from common names:
+Ожидаемые колонки определяются по типовым именам:
 
-- source: `akkadian`, `source`, `src`, `transliteration`, or `text`;
-- target: `english`, `target`, `translation`, or `tgt`;
+- source: `akkadian`, `source`, `src`, `transliteration` или `text`;
+- target: `english`, `target`, `translation` или `tgt`;
 - id: `id`.
 
-Inspect downloaded files before training:
+Проверка загруженных файлов перед обучением:
 
 ```bash
 python scripts/inspect_data.py data/raw/train.csv data/raw/test.csv data/raw/sample_submission.csv
 ```
 
-Or run the complete data stage in one command:
+Полный data stage одной командой:
 
 ```bash
 python scripts/run_data_stage.py
 ```
 
-This validates the required Kaggle files, prints dataset statistics, and creates both raw
-and normalized train/dev splits.
+Команда проверяет обязательные Kaggle-файлы, печатает статистику датасета и создает raw и normalized train/dev split.
 
-For every external corpus, check exact and near duplicates against Kaggle test sources:
+Для каждого внешнего корпуса нужно проверять exact и near duplicates относительно Kaggle test sources:
 
 ```bash
 python scripts/check_leakage.py \
@@ -114,11 +113,11 @@ python scripts/check_leakage.py \
   --normalize
 ```
 
-If exact or near overlaps are found, remove them from the external corpus before training.
+Если найдены exact или near overlaps, их нужно удалить из внешнего корпуса до обучения.
 
-## Prepare Dev Split
+## Подготовка dev split
 
-Baseline split without normalization:
+Baseline split без нормализации:
 
 ```bash
 python scripts/prepare_split.py \
@@ -126,7 +125,7 @@ python scripts/prepare_split.py \
   --output-dir data/processed/raw
 ```
 
-Normalized split:
+Split с нормализацией:
 
 ```bash
 python scripts/prepare_split.py \
@@ -135,20 +134,20 @@ python scripts/prepare_split.py \
   --normalize
 ```
 
-The current normalizer:
+Текущий normalizer:
 
-- uses Unicode NFC;
-- converts subscript digits such as `₂` to `2`;
-- removes broken-sign brackets `⸢...⸣`;
-- unwraps angle brackets `<...>`;
-- keeps determinatives as spaced `{d}`-style tokens;
-- replaces lacunae `[ ... ]` with `<lacuna>`;
-- keeps Akkadian diacritics by default;
-- lowercases text.
+- использует Unicode NFC;
+- переводит subscript digits, например `₂`, в `2`;
+- удаляет broken-sign brackets `⸢...⸣`;
+- разворачивает angle brackets `<...>`;
+- сохраняет determinatives как отдельные `{d}`-style токены;
+- заменяет lacunae `[ ... ]` на `<lacuna>`;
+- по умолчанию сохраняет аккадские diacritics;
+- приводит текст к нижнему регистру.
 
-## Train Baseline
+## Обучение baseline
 
-Default model: `google/byt5-small`.
+Модель по умолчанию: `google/byt5-small`.
 
 ```bash
 python model.py train \
@@ -159,15 +158,15 @@ python model.py train \
   --learning-rate 5e-4
 ```
 
-The model is saved to:
+Модель сохраняется в:
 
 ```text
 model/baseline_raw/
 ```
 
-Weights are intentionally ignored by git. Upload final weights to Hugging Face Hub, W&B, or ClearML.
+Веса намеренно игнорируются Git. Финальные веса нужно загрузить в Hugging Face Hub, W&B или ClearML.
 
-For the orthography normalization ablation:
+Ablation с нормализацией орфографии:
 
 ```bash
 python model.py train \
@@ -179,7 +178,7 @@ python model.py train \
   --learning-rate 5e-4
 ```
 
-For the mini-ensemble ablation, train at least two checkpoints with different seeds:
+Для mini-ensemble нужно обучить минимум два checkpoint с разными seed:
 
 ```bash
 python model.py train \
@@ -193,7 +192,7 @@ python model.py train \
   --seed 777
 ```
 
-Then evaluate the checkpoints and export predictions from the best dev chrF++ model:
+Затем можно оценить checkpoint'ы и экспортировать предсказания от лучшей по dev chrF++ модели:
 
 ```bash
 python scripts/run_ensemble.py \
@@ -206,7 +205,7 @@ python scripts/run_ensemble.py \
   --submission-out data/results.csv
 ```
 
-## Predict One Sentence
+## Перевод одного предложения
 
 ```bash
 python model.py predict \
@@ -216,7 +215,7 @@ python model.py predict \
   --max-target-length 128
 ```
 
-Multi-candidate decoding with a deterministic selector:
+Multi-candidate decoding с deterministic selector:
 
 ```bash
 python model.py predict \
@@ -228,7 +227,7 @@ python model.py predict \
   --max-target-length 128
 ```
 
-## Export Kaggle Submission
+## Экспорт Kaggle submission
 
 ```bash
 python model.py predict-file \
@@ -238,13 +237,13 @@ python model.py predict-file \
   --max-target-length 128
 ```
 
-Output:
+Результат:
 
 ```text
 data/results.csv
 ```
 
-Validate the file before upload:
+Перед загрузкой нужно проверить файл:
 
 ```bash
 python scripts/validate_submission.py \
@@ -252,10 +251,10 @@ python scripts/validate_submission.py \
   --submission data/results.csv
 ```
 
-Check the competition sample submission and rename the prediction column if Kaggle requires a
-different exact column name.
+Если Kaggle требует другое точное имя prediction-колонки, нужно свериться с `sample_submission.csv`
+и переименовать колонку перед отправкой.
 
-## Evaluate Dev Metrics
+## Оценка dev metrics
 
 ```bash
 python scripts/evaluate.py \
@@ -266,7 +265,7 @@ python scripts/evaluate.py \
   --predictions-out data/processed/raw/dev_predictions.csv
 ```
 
-For a quick smoke evaluation on a small subset:
+Быстрый smoke evaluation на небольшой подвыборке:
 
 ```bash
 python scripts/evaluate.py \
@@ -277,7 +276,7 @@ python scripts/evaluate.py \
   --predictions-out data/processed/raw/dev_predictions_smoke.csv
 ```
 
-Optional COMET evaluation:
+Опциональная COMET-оценка:
 
 ```bash
 pip install -e ".[comet]"
@@ -289,28 +288,28 @@ python scripts/evaluate.py \
   --comet
 ```
 
-Required metrics to report:
+Метрики, которые нужно отчитаться:
 
-- BLEU with sacreBLEU;
-- chrF++ with word order 2;
-- COMET as auxiliary metric with `--comet` (not trained on Akkadian; treat as diagnostic);
+- BLEU через sacreBLEU;
+- chrF++ с word order 2;
+- COMET как auxiliary metric через `--comet` (COMET не обучался на аккадском, поэтому это diagnostic metric);
 - Kaggle public/private leaderboard score.
 
-Current local baseline metrics:
+Текущие локальные baseline metrics:
 
-| Run | BLEU on dev | chrF++ on dev | Notes |
+| Запуск | BLEU на dev | chrF++ на dev | Заметки |
 |---|---:|---:|---|
 | ByT5-small raw, 1 epoch, greedy, max target length 128 | 0.2666 | 10.3048 | `model/baseline_raw`, dev size 157 |
 | ByT5-small raw, 1 epoch, beam size 4, max target length 128 | 0.2369 | 10.1660 | `model/baseline_raw`, dev size 157 |
 | ByT5-small raw, 1 epoch, beam size 8, max target length 128 | 0.2466 | 10.0706 | `model/baseline_raw`, dev size 157 |
 | ByT5-small raw, seed 777, 1 epoch, greedy, max target length 128 | 0.0838 | 8.3695 | `model/baseline_seed_777`, dev size 157 |
-| Mini-ensemble best-dev selector, seeds 42 and 777 | 0.2666 | 10.3048 | selected `model/baseline_raw` |
+| Mini-ensemble best-dev selector, seeds 42 and 777 | 0.2666 | 10.3048 | выбран `model/baseline_raw` |
 | ByT5-small normalized, 1 epoch, greedy, max target length 128 | 0.1648 | 9.2342 | `model/baseline_normalized`, dev size 157 |
 
-Kaggle API submission note: the current baseline `data/results.csv` was generated successfully,
-but Kaggle returned `400 Bad Request` on submission creation after the competition deadline
-listed by the API as `2026-03-23 23:59:00`. Keep the file for manual late-submission attempts
-or attach it in the homework report if late submissions remain closed.
+Примечание по Kaggle API submission: текущий baseline `data/results.csv` успешно сгенерирован,
+но Kaggle вернул `400 Bad Request` при создании submission после дедлайна соревнования,
+который API показывает как `2026-03-23 23:59:00`. Файл стоит сохранить для ручной late-submission
+попытки или приложить к отчету, если поздние отправки закрыты.
 
 ## Beam Search Sweep
 
@@ -323,9 +322,9 @@ python scripts/run_beam_sweep.py \
   --output data/processed/raw/beam_sweep_4_8.csv
 ```
 
-## Mandatory Ablations
+## Обязательные ablations
 
-Fill this table after running experiments.
+Итоговая таблица экспериментов:
 
 | Technique | chrF++ on dev | Kaggle public LB | Notes |
 |---|---:|---:|---|
@@ -336,13 +335,13 @@ Fill this table after running experiments.
 
 ## Streaming Service
 
-Run locally:
+Локальный запуск:
 
 ```bash
 uvicorn api.server:app --host 0.0.0.0 --port 8080
 ```
 
-Open:
+Открыть:
 
 ```text
 http://localhost:8080
@@ -354,7 +353,7 @@ Health check:
 curl http://localhost:8080/health
 ```
 
-View and download logs inside the running container:
+Просмотр и скачивание логов внутри запущенного контейнера:
 
 ```bash
 curl http://localhost:8080/logs
@@ -369,7 +368,7 @@ curl -N -X POST http://localhost:8080/translate \
   -d '{"text":"šarrum ana ālim illik"}'
 ```
 
-Local SSE check passed with `model/baseline_raw`. Example streamed chunks:
+Локальная SSE-проверка прошла с `model/baseline_raw`. Пример streamed chunks:
 
 ```text
 data: {"token": "To "}
@@ -390,10 +389,10 @@ CPU profile:
 docker compose --profile cpu up --build
 ```
 
-The image build context excludes raw corpora, checkpoints, `.venv`, and W&B artifacts through
-`.dockerignore`; runtime `./model` and `./data` are mounted as volumes by Compose.
+Build context образа исключает raw corpora, checkpoints, `.venv` и W&B artifacts через
+`.dockerignore`; runtime-директории `./model` и `./data` монтируются в контейнер через Compose volumes.
 
-Then open:
+После запуска открыть:
 
 ```text
 http://localhost:8080
@@ -405,19 +404,18 @@ GPU/TGI profile:
 docker compose --profile gpu up --build
 ```
 
-The GPU profile starts both:
+GPU profile запускает оба сервиса:
 
-- `tgi` on port `8081`, serving `./model/baseline_raw`;
-- `translator-tgi` on port `8080`, serving the same UI and forwarding streaming
-  translation requests to TGI through `TGI_URL=http://tgi:80`.
+- `tgi` на порту `8081`, serving `./model/baseline_raw`;
+- `translator-tgi` на порту `8080`, serving того же UI и forwarding streaming translation requests
+  в TGI через `TGI_URL=http://tgi:80`.
 
-Production path: **ByT5 + HuggingFace TGI** for encoder-decoder token streaming. The
-CPU profile remains available as a local fallback that streams generated text through
-the FastAPI gateway.
+Production path: **ByT5 + HuggingFace TGI** для encoder-decoder token streaming.
+CPU profile остается локальным fallback-режимом, который стримит сгенерированный текст через FastAPI gateway.
 
-Local Docker verification status: not run on the current machine because Docker CLI is not
-installed (`docker: command not found`). The compose file is present and should be checked on
-a Docker-enabled host before final submission.
+Статус локальной Docker-проверки: на текущей машине Docker CLI не установлен
+(`docker: command not found`). Compose-файл подготовлен и должен быть проверен на Docker-enabled host
+перед финальной сдачей.
 
 ## Latency Benchmark
 
@@ -425,13 +423,13 @@ a Docker-enabled host before final submission.
 python scripts/benchmark_streaming.py --url http://localhost:8080/translate --runs 10
 ```
 
-Report:
+Нужно отчитаться:
 
 - median TTFT;
 - p95 TTFT;
 - tokens/sec.
 
-Measured locally after model warmup:
+Локально после model warmup измерено:
 
 | Backend | Device | Median TTFT | p95 TTFT | Median tokens/sec |
 |---|---|---:|---:|---:|
@@ -439,20 +437,20 @@ Measured locally after model warmup:
 
 ## Experiment Tracking
 
-Training uses `report_to=["wandb"]` in the Hugging Face trainer. For offline debugging:
+Обучение использует `report_to=["wandb"]` в Hugging Face trainer. Для offline debugging:
 
 ```bash
 export WANDB_MODE=offline
 ```
 
-For final submission, sync runs and attach:
+Для финальной сдачи нужно синхронизировать runs и приложить:
 
 - hyperparameters;
 - train loss curves;
 - dev BLEU / chrF++;
 - best checkpoint artifact.
 
-Local W&B offline runs:
+Локальные W&B offline runs:
 
 ```text
 wandb/offline-run-20260601_232749-d83o4fyw  # raw baseline seed 42
@@ -460,28 +458,29 @@ wandb/offline-run-20260603_131813-6rv810mu  # normalized baseline
 wandb/offline-run-20260604_151724-gblbyz58  # raw baseline seed 777
 ```
 
-## Dataset And License Log
+## Датасеты и лицензии
 
-| Dataset | Purpose | License / Terms | Leakage Check |
+| Dataset | Назначение | License / Terms | Leakage Check |
 |---|---|---|---|
 | Kaggle Deep Past train.csv | supervised training | Kaggle competition terms | official train only |
 | Kaggle Deep Past test.csv | Kaggle prediction export | Kaggle competition terms | never used for training |
 | External corpora | not used in current local run | n/a | n/a |
 
-## Submission Checklist
+## Чеклист сдачи
 
-Run the local readiness checker before final upload:
+Перед финальной загрузкой запустить local readiness checker:
 
 ```bash
 python scripts/check_project_ready.py
 ```
 
-- [x] Public GitHub/GitLab repo.
-- [x] `main` and `develop` branches.
-- [x] `README.md` has full name and group.
-- [ ] Kaggle leaderboard screenshot is added.
-- [x] Streaming UI GIF/video is added.
-- [x] `data/log_file.log` is created by the singleton logger.
-- [x] No model weights or raw corpora are committed.
-- [x] W&B offline runs are recorded locally.
-- [ ] Docker Compose starts the service on a Docker-enabled host.
+- [x] Публичный GitHub/GitLab repository.
+- [x] Ветки `main` и `develop`.
+- [x] В `README.md` указаны ФИО и группа.
+- [ ] Добавлен Kaggle leaderboard screenshot.
+- [x] Добавлен GIF/video с демонстрацией streaming UI.
+- [x] `data/log_file.log` создается singleton logger'ом.
+- [x] Model weights и raw corpora не закоммичены.
+- [x] W&B offline runs записаны локально.
+- [ ] Docker Compose запускает сервис на Docker-enabled host.
+

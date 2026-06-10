@@ -1,18 +1,19 @@
 # Machine Translation
 
-Homework 3 project: low-resource Akkadian transliteration -> English neural machine translation
-and a streaming translator web application.
+Проект для домашнего задания 3: low-resource neural machine translation
+для направления аккадская транслитерация -> английский и web-приложение
+потокового переводчика.
 
-The implementation lives in [`machine_translation/`](machine_translation/).
+Основная реализация находится в [`machine_translation/`](machine_translation/).
 
-Start with the full project report and run instructions:
+Полный отчет по проекту и инструкции по запуску:
 
 - [`machine_translation/README.md`](machine_translation/README.md)
 - [`machine_translation/model.py`](machine_translation/model.py)
 - [`machine_translation/docker-compose.yaml`](machine_translation/docker-compose.yaml)
 
-Current branch workflow:
+Рабочий процесс с ветками:
 
-- `dev` contains active development.
-- `main` is the release branch for final submission.
+- `dev` содержит активную разработку.
+- `main` используется как release-ветка для финальной сдачи.
 
