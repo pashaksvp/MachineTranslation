@@ -7,7 +7,7 @@ from pathlib import Path
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse, StreamingResponse
+from fastapi.responses import FileResponse, PlainTextResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
@@ -36,6 +36,7 @@ app.add_middleware(
 
 web_dir = Path(__file__).resolve().parents[1] / "web"
 app.mount("/static", StaticFiles(directory=web_dir), name="static")
+log_path = Path("data/log_file.log")
 
 
 class TranslateRequest(BaseModel):
@@ -50,6 +51,20 @@ def index() -> FileResponse:
 @app.get("/health")
 def health() -> dict[str, str]:
     return {"status": "ok"}
+
+
+@app.get("/logs", response_class=PlainTextResponse)
+def view_logs() -> str:
+    if not log_path.exists():
+        return ""
+    return log_path.read_text(encoding="utf-8")
+
+
+@app.get("/logs/download")
+def download_logs() -> FileResponse:
+    log_path.parent.mkdir(parents=True, exist_ok=True)
+    log_path.touch(exist_ok=True)
+    return FileResponse(log_path, filename="log_file.log", media_type="text/plain")
 
 
 def _sse_event(payload: dict[str, str]) -> str:

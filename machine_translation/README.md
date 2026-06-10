@@ -318,6 +318,13 @@ Health check:
 curl http://localhost:8080/health
 ```
 
+View and download logs inside the running container:
+
+```bash
+curl http://localhost:8080/logs
+curl -O -J http://localhost:8080/logs/download
+```
+
 Streaming endpoint:
 
 ```bash
