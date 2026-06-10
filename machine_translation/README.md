@@ -2,8 +2,8 @@
 
 ## Author
 
-- Full name: TODO
-- Group: TODO
+- Full name: Fomin Pavel Andreevich
+- Group: 972402
 
 This repository implements an end-to-end low-resource NMT project for the Kaggle competition
 **Deep Past Initiative: Machine Translation**, direction **Akkadian transliteration -> English**.
@@ -478,7 +478,7 @@ python scripts/check_project_ready.py
 
 - [x] Public GitHub/GitLab repo.
 - [x] `main` and `develop` branches.
-- [ ] `README.md` has full name and group.
+- [x] `README.md` has full name and group.
 - [ ] Kaggle leaderboard screenshot is added.
 - [x] Streaming UI GIF/video is added.
 - [x] `data/log_file.log` is created by the singleton logger.

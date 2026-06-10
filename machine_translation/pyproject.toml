@@ -5,7 +5,7 @@ description = "Low-resource Akkadian to English NMT with streaming translator UI
 readme = "README.md"
 requires-python = ">=3.10,<3.13"
 authors = [
-  { name = "TODO: Your full name" }
+  { name = "Fomin Pavel Andreevich" }
 ]
 dependencies = [
   "accelerate>=0.33.0",
