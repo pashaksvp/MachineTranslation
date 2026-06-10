@@ -46,6 +46,8 @@ packages = ["src/akkadian_mt"]
 
 [tool.hatch.build.targets.wheel.force-include]
 "model.py" = "model.py"
+"api" = "api"
+"web" = "web"
 
 [tool.ruff]
 line-length = 100

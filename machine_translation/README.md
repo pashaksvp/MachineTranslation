@@ -360,14 +360,21 @@ Then open:
 http://localhost:8080
 ```
 
-GPU/TGI profile placeholder:
+GPU/TGI profile:
 
 ```bash
 docker compose --profile gpu up --build
 ```
 
-Final production path for this homework should use **ByT5 + HuggingFace TGI** for true
-encoder-decoder token streaming. The current gateway and UI are already SSE-compatible.
+The GPU profile starts both:
+
+- `tgi` on port `8081`, serving `./model/baseline_raw`;
+- `translator-tgi` on port `8080`, serving the same UI and forwarding streaming
+  translation requests to TGI through `TGI_URL=http://tgi:80`.
+
+Production path: **ByT5 + HuggingFace TGI** for encoder-decoder token streaming. The
+CPU profile remains available as a local fallback that streams generated text through
+the FastAPI gateway.
 
 Local Docker verification status: not run on the current machine because Docker CLI is not
 installed (`docker: command not found`). The compose file is present and should be checked on

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import os
+from urllib.request import Request, urlopen
 from collections.abc import Iterator
 from pathlib import Path
 
@@ -25,6 +26,8 @@ translator = MyTranslatorModel(
     max_source_length=int(os.getenv("MAX_SOURCE_LENGTH", "256")),
     max_target_length=int(os.getenv("MAX_TARGET_LENGTH", "128")),
 )
+tgi_url = os.getenv("TGI_URL", "").rstrip("/")
+max_target_length = int(os.getenv("MAX_TARGET_LENGTH", "128"))
 
 app.add_middleware(
     CORSMiddleware,
@@ -71,18 +74,52 @@ def _sse_event(payload: dict[str, str]) -> str:
     return f"data: {json.dumps(payload, ensure_ascii=False)}\n\n"
 
 
+def _tgi_stream(text: str) -> Iterator[str]:
+    prompt = f"translate Akkadian to English: {text}"
+    payload = {
+        "inputs": prompt,
+        "parameters": {
+            "max_new_tokens": max_target_length,
+            "return_full_text": False,
+        },
+    }
+    request = Request(
+        f"{tgi_url}/generate_stream",
+        data=json.dumps(payload).encode("utf-8"),
+        headers={"Content-Type": "application/json"},
+        method="POST",
+    )
+    with urlopen(request, timeout=120) as response:
+        for raw_line in response:
+            line = raw_line.decode("utf-8").strip()
+            if not line.startswith("data:"):
+                continue
+            data = line.removeprefix("data:").strip()
+            if data == "[DONE]":
+                break
+            payload = json.loads(data)
+            token = payload.get("token", {})
+            token_text = token.get("text", "")
+            if token_text and not token.get("special", False):
+                yield token_text
+
+
 @app.post("/translate")
 def translate(request: TranslateRequest) -> StreamingResponse:
     logger.info("Translation request received: %d chars", len(request.text))
 
     def stream() -> Iterator[str]:
         try:
-            result = translator.predict(request.text, stream=True)
-            if isinstance(result, str):
-                yield _sse_event({"token": result})
-            else:
-                for token in result:
+            if tgi_url:
+                for token in _tgi_stream(request.text):
                     yield _sse_event({"token": token})
+            else:
+                result = translator.predict(request.text, stream=True)
+                if isinstance(result, str):
+                    yield _sse_event({"token": result})
+                else:
+                    for token in result:
+                        yield _sse_event({"token": token})
             yield _sse_event({"done": "true"})
         except Exception as exc:
             logger.exception("Translation failed")
