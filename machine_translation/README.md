@@ -470,6 +470,12 @@ wandb/offline-run-20260604_151724-gblbyz58  # raw baseline seed 777
 
 ## Submission Checklist
 
+Run the local readiness checker before final upload:
+
+```bash
+python scripts/check_project_ready.py
+```
+
 - [x] Public GitHub/GitLab repo.
 - [x] `main` and `develop` branches.
 - [ ] `README.md` has full name and group.
