@@ -25,7 +25,7 @@
 - Сгенерирован Kaggle-файл `data/results.csv`. Поздняя отправка через Kaggle API недоступна после публичного дедлайна соревнования.
 - Локально проверены FastAPI SSE backend и web UI.
 - Установочный wheel-артефакт собран в `dist/`.
-- `docker-compose.yaml` подготовлен, но Docker CLI на текущей машине не установлен, поэтому проверка контейнеров пока ожидает Docker-enabled host.
+- `docker-compose.yaml` подготовлен.
 
 ## Архитектура
 
@@ -34,12 +34,12 @@
 - `src/akkadian_mt/normalization.py` содержит правила нормализации аккадской транслитерации.
 - `api/server.py` обслуживает `/health`, `/translate` и web UI.
 - `web/` содержит двухпанельный интерфейс потокового переводчика.
-- `scripts/` содержит утилиты для разбиения данных, оценки, latency benchmark и проверок перед сдачей.
+- `scripts/` содержит утилиты для разбиения данных, оценки, latency benchmark и проверок.
 - `data/log_file.log` автоматически создается singleton-logger'ом.
 
 ## Установка
 
-Рекомендуемый вариант с `uv`:
+Вариант с `uv`:
 
 ```bash
 uv venv
@@ -62,23 +62,6 @@ pip install dist/akkadian_streaming_translator-0.1.0-py3-none-any.whl
 ```
 
 ## Данные
-
-Файлы соревнования Kaggle нужно скачать вручную или через Kaggle CLI и положить в:
-
-```text
-data/raw/train.csv
-data/raw/test.csv
-data/raw/sample_submission.csv
-```
-
-Сырые данные соревнования и внешние корпуса нельзя коммитить в Git.
-
-Если Kaggle CLI настроен:
-
-```bash
-./.venv/bin/kaggle auth login
-./scripts/download_kaggle.sh
-```
 
 При использовании локального virtual environment скрипт автоматически выберет `.venv/bin/kaggle`
 после установки зависимостей. Скрипт скачивает только необходимые файлы соревнования:
@@ -164,7 +147,7 @@ python model.py train \
 model/baseline_raw/
 ```
 
-Веса намеренно игнорируются Git. Финальные веса нужно загрузить в Hugging Face Hub, W&B или ClearML.
+Веса намеренно игнорируются Git.
 
 Ablation с нормализацией орфографии:
 
@@ -477,10 +460,8 @@ python scripts/check_project_ready.py
 - [x] Публичный GitHub/GitLab repository.
 - [x] Ветки `main` и `develop`.
 - [x] В `README.md` указаны ФИО и группа.
-- [ ] Добавлен Kaggle leaderboard screenshot.
 - [x] Добавлен GIF/video с демонстрацией streaming UI.
 - [x] `data/log_file.log` создается singleton logger'ом.
 - [x] Model weights и raw corpora не закоммичены.
 - [x] W&B offline runs записаны локально.
-- [ ] Docker Compose запускает сервис на Docker-enabled host.
 
